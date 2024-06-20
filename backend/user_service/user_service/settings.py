@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework.authtoken',
     "djoser",
+    'rest_framework_simplejwt',
     "corsheaders",
     'drf_yasg',
 
@@ -57,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'user_service.urls'
@@ -128,24 +132,35 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#         'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     ),
+# }
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
-from datetime import timedelta
-
 DJOSER = {
-    "PASSWORD_RESET_CONFIRM_URL": "password_reset/{uid}/{token}",
+    'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': 'activate/{uid}/{token}/',
     "USER_CREATE_PASSWORD_RETYPE": True,
+    "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
-    'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {},
     'EMAIL': {
         'password_reset': 'users.email.CustomPasswordResetEmail',
+        'activation': "users.email.CustomActivationEmail",
+        # 'activation': 'djoser.email.ActivationEmail',
     },
 }
 
@@ -174,7 +189,16 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+
+    # "TOKEN_OBTAIN_SERIALIZER": "api_gateway.gateway.serializers.CustomTokenObtainPairSerializer",
+    # "TOKEN_OBTAIN_SERIALIZER": "user_service.users.serializers.CustomTokenObtainPairSerializer",
 }
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.AllowAllUsersModelBackend',
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -188,3 +212,5 @@ EMAIL_HOST_USER = os.getenv('EMAIL_LOGIN')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DOMAIN = 'localhost:3000'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+AUTH_USER_MODEL = 'users.User'

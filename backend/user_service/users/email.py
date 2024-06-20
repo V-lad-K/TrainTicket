@@ -18,3 +18,19 @@ class CustomPasswordResetEmail(email.PasswordResetEmail):
                   f"The {context['site_name']} team"
 
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)
+
+
+class CustomActivationEmail(email.ActivationEmail):
+    def send(self, to, *args, **kwargs):
+        context = self.get_context_data()
+
+        subject = "Activation Account "
+        message = f"Hello {context['user'].username},\n\n" \
+                  f"You're receiving this email because you should to" \
+                  f"activate your user account at {context['site_name']}.\n\n" \
+                  f"Please go to the following page:\n" \
+                  f"n{context['url']}\n\n" \
+                  f"Thanks for using our site!\n" \
+                  f"The {context['site_name']} team"
+
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)

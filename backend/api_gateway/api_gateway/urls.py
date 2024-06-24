@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 
-from common.swagger import swagger_urlpatterns
+from gateway.swagger import swagger_urlpatterns
 
 urlpatterns = [
     path("", include(swagger_urlpatterns)),

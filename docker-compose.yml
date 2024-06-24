@@ -1,0 +1,14 @@
+services:
+  user-service:
+    build: ./backend/user_service
+    ports:
+      - "8001:8001"
+    volumes:
+     - ./backend/user_service:/code
+
+  api-gateway:
+    build: ./backend/api_gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/api_gateway:/code

@@ -1,12 +1,13 @@
 FROM python:3.11
-COPY requirements.txt /code/requirements.txt
 
-WORKDIR /code
+WORKDIR /code1
+
+COPY requirements.txt /code1/requirements.txt
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY . /code
+COPY . /code1
 
 EXPOSE 8001
 

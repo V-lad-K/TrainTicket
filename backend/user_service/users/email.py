@@ -1,6 +1,7 @@
 from djoser import email
 from django.core.mail import send_mail
 from django.conf import settings
+from .tasks import send_email, add
 
 
 class CustomPasswordResetEmail(email.PasswordResetEmail):
@@ -17,6 +18,7 @@ class CustomPasswordResetEmail(email.PasswordResetEmail):
                   f"Thanks for using our site!\n" \
                   f"The {context['site_name']} team"
 
+        # send_email(subject, message, settings.DEFAULT_FROM_EMAIL, to)
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)
 
 
@@ -32,5 +34,5 @@ class CustomActivationEmail(email.ActivationEmail):
                   f"n{context['url']}\n\n" \
                   f"Thanks for using our site!\n" \
                   f"The {context['site_name']} team"
-
+        # send_email.delay(subject, message, settings.DEFAULT_FROM_EMAIL, to)
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, to)

@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+
 from .serializers import (
     UserRegistrationSerializer,
     UserAuthorizationSerializer,
@@ -22,8 +23,8 @@ load_dotenv()
 
 
 class BaseUserMicroserviceAPIView(APIView):
-    BASE_URL = os.getenv("BASE_USER_SERVICE_URL")
-
+    # BASE_URL = os.getenv("BASE_USER_SERVICE_URL")
+    BASE_URL = "http://user-service:8001/api/"
     def __init__(self, url, **kwargs):
         super().__init__(**kwargs)
         self.url = url

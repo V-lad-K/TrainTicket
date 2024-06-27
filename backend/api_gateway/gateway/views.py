@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-
 from .serializers import (
     UserRegistrationSerializer,
     UserAuthorizationSerializer,
@@ -14,10 +13,8 @@ from .serializers import (
     UserAccountActivationSerializer
 )
 
-
 from dotenv import load_dotenv
 from drf_yasg.utils import swagger_auto_schema
-
 
 load_dotenv()
 

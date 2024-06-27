@@ -159,6 +159,7 @@ DJOSER = {
     "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
     'SERIALIZERS': {},
     'EMAIL': {
+        'activation': "users.email.CustomActivationEmail",
     },
 }
 

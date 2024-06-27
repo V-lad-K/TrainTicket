@@ -1,6 +1,6 @@
 import time
 from django.http import HttpResponse
-from .tasks import send
+from .tasks import
 
 
 def index(request):

@@ -32,4 +32,5 @@ class CustomActivationEmail(email.ActivationEmail):
                   f"n{context['url']}\n\n" \
                   f"Thanks for using our site!\n" \
                   f"The {context['site_name']} team"
+
         send_email.delay(subject, message, settings.DEFAULT_FROM_EMAIL, to[0])

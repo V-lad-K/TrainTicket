@@ -1,7 +1,10 @@
-from django.urls import path, include
+from django.urls import (
+    path,
+    include
+)
 
 urlpatterns = [
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-    path('auth/', include('djoser.urls.jwt')),
+    path('auth/', include('djoser.urls'), name="djoser"),
+    path('auth/', include('djoser.urls.authtoken'), name="djoser_authtoken"),
+    path('auth/', include('djoser.urls.jwt'), name="jwt"),
 ]

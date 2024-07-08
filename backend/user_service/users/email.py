@@ -25,7 +25,7 @@ class CustomActivationEmail(email.ActivationEmail):
         context = self.get_context_data()
 
         subject = "Activation Account "
-        message = f"Hello {context['user'].username},\n\n" \
+        message = f"Wassap Hello {context['user'].username},\n\n" \
                   f"You're receiving this email because you should to" \
                   f"activate your user account at {context['site_name']}.\n\n" \
                   f"Please go to the following page:\n" \
@@ -33,4 +33,4 @@ class CustomActivationEmail(email.ActivationEmail):
                   f"Thanks for using our site!\n" \
                   f"The {context['site_name']} team"
 
-        send_email.delay(subject, message, settings.DEFAULT_FROM_EMAIL, to[0])
+        send_email.delay(subject, message, settings.DEFAULT_FROM_EMAIL, [to[0]])

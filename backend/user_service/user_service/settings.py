@@ -133,20 +133,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework.authentication.TokenAuthentication',
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#         'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAuthenticated',
-#     ),
-# }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
@@ -157,9 +150,12 @@ DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
-    'SERIALIZERS': {},
+
     'EMAIL': {
-        'activation': "users.email.CustomActivationEmail",
+        # 'activation': "users.email.CustomActivationEmail",
+    },
+    'SERIALIZERS': {
+        'user_create': "users.serializers.CustomUserCreateSerializer",
     },
 }
 
@@ -189,15 +185,7 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 
-    # "TOKEN_OBTAIN_SERIALIZER": "api_gateway.gateway.serializers.CustomTokenObtainPairSerializer",
-    # "TOKEN_OBTAIN_SERIALIZER": "user_service.users.serializers.CustomTokenObtainPairSerializer",
 }
-
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.AllowAllUsersModelBackend',
-#     'django.contrib.auth.backends.ModelBackend',
-# ]
-
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -214,10 +202,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 AUTH_USER_MODEL = 'users.User'
 
-# CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+

@@ -2,16 +2,17 @@ import re
 
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
-from .models import User
+# from .models import User
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class CustomUserCreateSerializer(UserCreateSerializer):
-    class Meta:
+    class Meta(UserCreateSerializer.Meta):
         model = User
         fields = ["id", 'username', 'email', 'password']
 
-    @staticmethod
-    def validate_username(value):
+    def validate_username(self, value):
         regex_username_pattern = "^[A-Za-z0-9_]*$"
 
         if not len(value):
@@ -27,8 +28,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
         return value
 
-    @staticmethod
-    def validate_email(value):
+    def validate_email(self, value):
         regex_email_pattern = r"^[A-Za-z0-9]+([._-][A-Za-z0-9]+)*@[A-Za-z0-9]+([._-][A-Za-z0-9]+)*$"
 
         if not len(value):
@@ -50,8 +50,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
         return value
 
-    @staticmethod
-    def validate_password(value):
+    def validate_password(self, value):
         regex_password_pattern = "^[^\u0400-\u04FF]*$"
 
         if " " in value:

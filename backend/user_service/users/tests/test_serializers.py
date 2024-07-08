@@ -1,9 +1,13 @@
+from unittest.mock import patch
+
 from django.test import TestCase
+
 from ..models import User
 from ..serializers import CustomUserCreateSerializer
 
 
 class UserRegistrationSerializerTestCase(TestCase):
+    @patch('users.serializers.CustomUserCreateSerializer', autospec=True)
     def test_serialize(self):
         user1 = User.objects.create_user(username="testUser1", email="testEmail1@gmail.com", password="testPassword123")
         user2 = User.objects.create_user(username="testUser2", email="testEmail2@gmail.com", password="testPassword456")
@@ -34,8 +38,8 @@ class UserRegistrationSerializerTestCase(TestCase):
         }
 
         serializer = CustomUserCreateSerializer(data=data)
-
         self.assertTrue(serializer.is_valid())
+        serializer.save()
 
     def test_invalid_username_contain_space(self):
         data = {
@@ -95,7 +99,7 @@ class UserRegistrationSerializerTestCase(TestCase):
             "password": "jgkfdjkkJKJKjkgjfdkg546546jhjhHj",
             "re_password": "jgkfdjkkJKJKjkgjfdkg546546jhjhHj"
         }
-        invalid_username ="gfhkgkghmkgfhfg.hgfhgf"
+        invalid_username = "gfhkgkghmkgfhfg.hgfhgf"
         data["username"] = invalid_username
         serializer = CustomUserCreateSerializer(data=data)
 
@@ -242,7 +246,7 @@ class UserRegistrationSerializerTestCase(TestCase):
             "email": "krugonovskiy@gmail.com",
             "re_password": "jgkfdjkkJKJKjkgjfdkg546546jhjhHj"
         }
-        invalid_password = "t"*151
+        invalid_password = "t" * 151
         data["password"] = invalid_password
         serializer = CustomUserCreateSerializer(data=data)
 
@@ -287,4 +291,3 @@ class UserRegistrationSerializerTestCase(TestCase):
 
         self.assertFalse(serializer.is_valid())
         self.assertIn("password", serializer.errors)
-

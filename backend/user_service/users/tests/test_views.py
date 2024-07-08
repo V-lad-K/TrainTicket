@@ -4,11 +4,11 @@ from rest_framework.test import APITestCase
 
 
 class UserRegistrationTest(APITestCase):
-    def test_user_registration_invalid_username(self, mock_custom_serializer, mock_default_serializer):
+    def test_user_registration_invalid_username(self):
         url = reverse('user-list')
 
         data = {
-            'username': 'qw',  # Невалідний username (менше 5 символів)
+            'username': 'qw',
             'email': 'testuser@example.com',
             'password': 'hgfhJMKKmkmk5675kmk',
             're_password': 'hgfhJMKKmkmk5675kmk'

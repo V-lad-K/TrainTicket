@@ -19,8 +19,6 @@ from django.urls import path, include
 
 from users.swagger import swagger_urlpatterns
 
-# from common.swagger import swagger_urlpatterns
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include("users.urls")),

@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    "users",
+
     "rest_framework",
     'rest_framework.authtoken',
     "djoser",
@@ -49,7 +51,6 @@ INSTALLED_APPS = [
     "corsheaders",
     'drf_yasg',
     'django_celery_results',
-    "users",
 ]
 
 MIDDLEWARE = [

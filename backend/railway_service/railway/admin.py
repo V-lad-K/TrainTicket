@@ -5,7 +5,7 @@ from .models import (
     CarriageModel,
     SpotModel,
     StationModel,
-    RoadmapTrainModel,
+    RoadmapDetailModel,
     RoadmapModel
 )
 
@@ -14,5 +14,5 @@ admin.site.register(TrainModel)
 admin.site.register(CarriageModel)
 admin.site.register(SpotModel)
 admin.site.register(StationModel)
-admin.site.register(RoadmapTrainModel)
+admin.site.register(RoadmapDetailModel)
 admin.site.register(RoadmapModel)

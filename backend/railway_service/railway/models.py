@@ -77,46 +77,42 @@ class RoadmapModel(models.Model):
         related_name='destination_set'
     )
 
+    train = models.ForeignKey(
+        TrainModel,
+        on_delete=models.CASCADE,
+        related_name="roadmap_train",
+        null=True
+    )
+
     def __str__(self):
         return f"{self.departure_station}-{self.destination_station}"
 
 
-class RoadmapTrainModel(models.Model):
+class RoadmapDetailModel(models.Model):
+    departure_station = models.ForeignKey(
+        StationModel,
+        on_delete=models.CASCADE,
+        related_name="departure_station_detail"
+    )
     departure_date = models.DateTimeField()
     arrival_date = models.DateTimeField()
-    roadmap = models.ManyToManyField(RoadmapModel)
-    train = models.ManyToManyField(TrainModel)
-    stop_number = models.IntegerField()
+    destination_station = models.ForeignKey(
+        StationModel,
+        on_delete=models.CASCADE,
+        related_name='destination_station_detail'
+    )
+    roadmap = models.ForeignKey(
+        RoadmapModel,
+        on_delete=models.CASCADE,
+        null=True
+    )
 
-    # def clean(self):
-    #     self.clean_stop_number(self.stop_number)
     def clean(self):
-        train_list = list(self.train.all())
-        roadmap_list = list(self.roadmap.all())
-        roadmap_train = RoadmapTrainModel.objects.filter(train=train_list[0])
-
-        # print("self.train", train_list)
-        # print("self.roadmap_list", roadmap_list)
-        # print("roadmap_train", roadmap_train)
-        # for tr in roadmap_train:
-        #     print(tr.__dict__)
-        #     trains = tr.train.all()
-        #     for train in trains:
-        #         print("train", train.type)
-
-        for train in train_list:
-            roadmap_trains = RoadmapTrainModel.objects.filter(train=train)
-            for roadmap_train in roadmap_trains:
-                roadmaps = list(roadmap_train.roadmap.all())
-                if len(roadmaps) > 1:
-                    for roadmap in roadmaps[-2:]:
-                        print("destination_station", roadmap.destination_station)
-                        print("roadmaps is", roadmap)
-        self.clean_stop_number(self.stop_number)
-
-    def clean_stop_number(self, value):
-        if value == 1:
-            raise ValidationError("haha")
+        print("station1  is", self.departure_station)
+        print("roadmap is", self.roadmap)
+        print("roadmap first station", self.roadmap.departure_station)
+        print(self.departure_station == self.roadmap.departure_station)
+        # roadmap = RoadmapModel.objects.get(departure_station=self.departure_station)
 
     def clean_roadmap(self, previous_roadmap):
         current_roadmaps = self.roadmap.all()

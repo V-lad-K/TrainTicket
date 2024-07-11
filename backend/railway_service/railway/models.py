@@ -66,8 +66,6 @@ class StationModel(models.Model):
 
 
 class RoadmapModel(models.Model):
-    departure_date = models.DateTimeField()
-    arrival_date = models.DateTimeField()
     departure_station = models.ForeignKey(
         StationModel,
         on_delete=models.CASCADE,
@@ -80,29 +78,51 @@ class RoadmapModel(models.Model):
     )
 
     def __str__(self):
-        return f"{self.departure_date}-{self.arrival_date}"
+        return f"{self.departure_station}-{self.destination_station}"
 
 
 class RoadmapTrainModel(models.Model):
+    departure_date = models.DateTimeField()
+    arrival_date = models.DateTimeField()
     roadmap = models.ManyToManyField(RoadmapModel)
     train = models.ManyToManyField(TrainModel)
     stop_number = models.IntegerField()
 
-    def clean_stop_number(self, value):
-        print("JJJJJJJJJJJJJJJJJJJJJ")
-        if value == 1:
-            raise "haha"
     # def clean(self):
-    #
-    #     for train in TrainModel.objects.all():
-    #         roadmaps = RoadmapTrainModel.objects.filter(train=train)
-    #         print("roadmaps", roadmaps)
-    #         previous_destination_station = None
-    #         for roadmap_train in roadmaps:
-    #             for roadmap in roadmap_train.roadmap.all():
-    #                 if previous_destination_station and previous_destination_station != roadmap.departure_station:
-    #                     print(previous_destination_station, roadmap.departure_station)
-    #                     raise ValidationError(
-    #                         f"Маршрут для потяга {train} не може починатися з {roadmap.departure_station}, бо попередній маршрут закінчується на {previous_destination_station}.")
-    #                 previous_destination_station = roadmap.destination_station
+    #     self.clean_stop_number(self.stop_number)
+    def clean(self):
+        train_list = list(self.train.all())
+        roadmap_list = list(self.roadmap.all())
+        roadmap_train = RoadmapTrainModel.objects.filter(train=train_list[0])
 
+        # print("self.train", train_list)
+        # print("self.roadmap_list", roadmap_list)
+        # print("roadmap_train", roadmap_train)
+        # for tr in roadmap_train:
+        #     print(tr.__dict__)
+        #     trains = tr.train.all()
+        #     for train in trains:
+        #         print("train", train.type)
+
+        for train in train_list:
+            roadmap_trains = RoadmapTrainModel.objects.filter(train=train)
+            for roadmap_train in roadmap_trains:
+                roadmaps = list(roadmap_train.roadmap.all())
+                if len(roadmaps) > 1:
+                    for roadmap in roadmaps[-2:]:
+                        print("destination_station", roadmap.destination_station)
+                        print("roadmaps is", roadmap)
+        self.clean_stop_number(self.stop_number)
+
+    def clean_stop_number(self, value):
+        if value == 1:
+            raise ValidationError("haha")
+
+    def clean_roadmap(self, previous_roadmap):
+        current_roadmaps = self.roadmap.all()
+        for roadmap in current_roadmaps:
+            if previous_roadmap.destination_station != roadmap.departure_station:
+                raise ValidationError("Error in station sequence")
+
+    def __str__(self):
+        return f"{self.departure_date}-{self.arrival_date}"

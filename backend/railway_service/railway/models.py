@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
 
 class TrainModel(models.Model):
@@ -108,17 +109,20 @@ class RoadmapDetailModel(models.Model):
     )
 
     def clean(self):
-        # print("station1  is", self.departure_station)
-        # print("roadmap is", self.roadmap)
-        # print("roadmap first station", self.roadmap.departure_station)
-        # print(self.departure_station == self.roadmap.departure_station)
+        self.quantity_roadmap_detail = len(list(RoadmapDetailModel.objects.filter(roadmap=self.roadmap)))
+        roadmap_detail_objects = RoadmapDetailModel.objects.filter(roadmap=self.roadmap)
+        self.previous_station_roadmap = RoadmapDetailModel.objects.filter(
+            roadmap=self.roadmap,
+            destination_station=self.departure_station
+        ).first() if roadmap_detail_objects.exists() else None
+
         self.validate_roadmap_start_station()
         self.validate_roadmap()
-        # roadmap = RoadmapModel.objects.get(departure_station=self.departure_station)
+        self.validate_equal_departure_station_destination_station()
+        self.validate_end_road()
 
     def validate_roadmap_start_station(self):
-        quantity_roadmap_detail = len(list(RoadmapDetailModel.objects.filter(roadmap=self.roadmap)))
-        if not quantity_roadmap_detail and self.roadmap.departure_station != self.departure_station:
+        if not self.quantity_roadmap_detail and self.roadmap.departure_station != self.departure_station:
             raise ValidationError("first roadmap detail has been departure station from roadmap")
 
     def validate_roadmap_destination_position(self):
@@ -126,21 +130,17 @@ class RoadmapDetailModel(models.Model):
             raise ValidationError("departure station and destination station can't be identical")
 
     def validate_roadmap(self):
-        roadmap_detail_objects = RoadmapDetailModel.objects.filter(roadmap=self.roadmap)
-        previous_station_roadmap = RoadmapDetailModel.objects.get(
-            roadmap=self.roadmap,
-            destination_station=self.departure_station
-        ) if roadmap_detail_objects.exists() else None
-
-        if previous_station_roadmap and previous_station_roadmap.destination_station != self.departure_station:
+        if not self.previous_station_roadmap and self.quantity_roadmap_detail:
             raise ValidationError("next departure station must be previous destination station")
 
+    def validate_equal_departure_station_destination_station(self):
+        if self.departure_station == self.destination_station:
+            raise ValidationError("departure_station must be not equal destination_station")
 
-    def clean_roadmap(self, previous_roadmap):
-        current_roadmaps = self.roadmap.all()
-        for roadmap in current_roadmaps:
-            if previous_roadmap.destination_station != roadmap.departure_station:
-                raise ValidationError("Error in station sequence")
+    def validate_end_road(self):
+        if (self.previous_station_roadmap and
+                self.previous_station_roadmap.destination_station == self.roadmap.destination_station):
+            raise ValidationError("Roadmap is over")
 
     def __str__(self):
         return f"{self.departure_date}-{self.arrival_date}"

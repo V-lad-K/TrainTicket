@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 
 
 class TrainModel(models.Model):
@@ -120,6 +119,8 @@ class RoadmapDetailModel(models.Model):
         self.validate_roadmap()
         self.validate_equal_departure_station_destination_station()
         self.validate_end_road()
+        self.validate_equal_date()
+        self.validate_departure_date()
 
     def validate_roadmap_start_station(self):
         if not self.quantity_roadmap_detail and self.roadmap.departure_station != self.departure_station:
@@ -136,6 +137,14 @@ class RoadmapDetailModel(models.Model):
     def validate_equal_departure_station_destination_station(self):
         if self.departure_station == self.destination_station:
             raise ValidationError("departure_station must be not equal destination_station")
+
+    def validate_equal_date(self):
+        if self.departure_date == self.arrival_date:
+            raise ValidationError("departure_date must be not equal departure_date in roadmap")
+
+    def validate_departure_date(self):
+        if self.quantity_roadmap_detail and self.departure_date < self.previous_station_roadmap.arrival_date:
+            raise ValidationError("departure date must be later then arrival date from previous roadmap")
 
     def validate_end_road(self):
         if (self.previous_station_roadmap and

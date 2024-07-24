@@ -6,7 +6,16 @@ services:
     volumes:
       - ./backend/user_service:/code
     depends_on:
-      - celery
+      - user-service-celery
+
+  railway-service:
+    build: ./backend/railway_service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./backend/railway_service:/code
+    depends_on:
+      - railway-service-celery
 
   api-gateway:
     build: ./backend/api_gateway
@@ -20,8 +29,14 @@ services:
     ports:
       - "6379:6379"
 
-  celery:
+  user-service-celery:
     build: ./backend/user_service
     command: celery -A user_service worker -l info
+    depends_on:
+      - redis
+
+  railway-service-celery:
+    build: ./backend/railway_service
+    command: celery -A railway_service worker -l info
     depends_on:
       - redis

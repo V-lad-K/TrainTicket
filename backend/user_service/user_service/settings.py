@@ -153,7 +153,7 @@ DJOSER = {
     "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
 
     'EMAIL': {
-        # 'activation': "users.email.CustomActivationEmail",
+        'activation': "users.email.CustomActivationEmail",
     },
     'SERIALIZERS': {
         'user_create': "users.serializers.CustomUserCreateSerializer",
@@ -204,9 +204,11 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 AUTH_USER_MODEL = 'users.User'
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
+# CELERY_BROKER_URL = 'redis://localhost:6379/1'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 

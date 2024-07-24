@@ -31,7 +31,6 @@ class CarriageModel(models.Model):
         TrainModel,
         on_delete=models.CASCADE,
     )
-    spot_numbers = models.IntegerField()
 
     def __str__(self):
         return f"Carriage_{self.number}_{self.train}"

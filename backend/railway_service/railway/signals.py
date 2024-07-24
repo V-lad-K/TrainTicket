@@ -20,11 +20,30 @@ def create_carriage(train_id):
     carriage_count = 10
     train = TrainModel.objects.get(id=train_id)
 
-    for i in range(1, carriage_count+1):
-        CarriageModel.objects.create()
+    first_class_start_index = 6
+    lux_class_start_index = 9
+    for carriage_number in range(1, carriage_count+1):
+        if carriage_number <= first_class_start_index:
+            carriage_type = "S"
+        elif first_class_start_index < carriage_number < lux_class_start_index:
+            carriage_type = "F"
+        else:
+            carriage_type = "L"
+
+        CarriageModel.objects.create(
+            type=carriage_type,
+            number=carriage_number,
+            train=train
+        )
 
 
 @receiver(post_save, sender=CarriageModel)
 def post_save_carriage_model(sender, instance, created, **kwargs):
     if created:
         create_spot(instance.id)
+
+
+@receiver(post_save, sender=TrainModel)
+def post_save_train_model(sender, instance, created, **kwargs):
+    if created:
+        create_carriage(instance.id)

@@ -64,6 +64,50 @@ class StationModel(models.Model):
         return self.name
 
 
+class SpotDetailModel(models.Model):
+    departure_station = models.ForeignKey(
+        StationModel,
+        on_delete=models.CASCADE,
+        related_name="departure_spot_set"
+    )
+    destination_station = models.ForeignKey(
+        StationModel,
+        on_delete=models.CASCADE,
+        related_name='destination_spot_set'
+    )
+    spot = models.ForeignKey(
+        SpotModel,
+        on_delete=models.CASCADE,
+        related_name="spot_detail"
+    )
+    customer_id = models.IntegerField(
+        null=True
+    )
+
+    def clean(self):
+        self.validate_spot_already_sold()
+
+    def validate_spot_already_sold(self):
+        spot = SpotModel.objects.get(id=self.spot.id)
+        train = spot.carriage.train
+        roadmap = RoadmapModel.objects.get(train=train)
+
+        spots = SpotDetailModel.objects.filter(spot=self.spot)
+        for spot in spots:
+            overlapping_tickets = RoadmapDetailModel.objects.filter(
+                roadmap=roadmap,
+                departure_station__lt=spot.destination_station,
+                destination_station__gt=spot.departure_station
+            ).exclude(id=self.id)
+
+            roadmap_list = [overlapping_ticket.departure_station for overlapping_ticket in overlapping_tickets]
+            if self.departure_station in roadmap_list:
+                raise ValidationError("The spot is already booked for part of this route.")
+
+    def __str__(self):
+        return f"detail_spot_{self.spot}"
+
+
 class RoadmapModel(models.Model):
     departure_station = models.ForeignKey(
         StationModel,

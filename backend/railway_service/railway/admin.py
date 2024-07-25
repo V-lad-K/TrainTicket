@@ -6,7 +6,8 @@ from .models import (
     SpotModel,
     StationModel,
     RoadmapDetailModel,
-    RoadmapModel
+    RoadmapModel,
+    SpotDetailModel
 )
 
 
@@ -16,3 +17,4 @@ admin.site.register(SpotModel)
 admin.site.register(StationModel)
 admin.site.register(RoadmapDetailModel)
 admin.site.register(RoadmapModel)
+admin.site.register(SpotDetailModel)

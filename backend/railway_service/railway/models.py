@@ -14,6 +14,9 @@ class TrainModel(models.Model):
     )
     number = models.IntegerField()
 
+    def __str__(self):
+        return f"train_{self.type}_{self.number}"
+
 
 class CarriageModel(models.Model):
     class CarriageTypeModel(models.TextChoices):

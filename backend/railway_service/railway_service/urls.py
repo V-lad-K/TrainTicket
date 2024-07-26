@@ -21,4 +21,5 @@ from railway.swagger import swagger_urlpatterns
 urlpatterns = [
     path("", include(swagger_urlpatterns)),
     path('admin/', admin.site.urls),
+    path("api/railway/", include("railway.urls"))
 ]
